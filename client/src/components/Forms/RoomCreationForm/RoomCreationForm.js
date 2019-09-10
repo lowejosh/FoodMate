@@ -1,17 +1,7 @@
-import React from "react";
-import Avatar from "@material-ui/core/Avatar";
+import React, { useRef } from "react";
 import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import CreateIcon from "@material-ui/icons/Create";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import GeoSuggest from "react-geosuggest";
 import "./RoomCreationForm.css";
 
@@ -27,6 +17,16 @@ const useStyles = makeStyles(theme => ({
 
 const RoomCreationForm = props => {
   const classes = useStyles();
+  const geoRef = useRef();
+
+  const handleSuggestSelect = (data) => {
+    console.log(data);
+  }
+
+  const handleBlur = (d) => {
+    console.log('reached');
+    console.log(geoRef);
+  }
 
   return (
     <form className={classes.form} noValidate>
@@ -50,7 +50,7 @@ const RoomCreationForm = props => {
         type="text"
         id="location"
       />
-      <GeoSuggest className="test" />
+      <GeoSuggest ref={geoRef} onBlur={handleBlur} onSuggestSelect={handleSuggestSelect} className="test" />
       <Button
         type="submit"
         fullWidth
