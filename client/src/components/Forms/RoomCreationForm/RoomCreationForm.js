@@ -1,9 +1,12 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Slider from "@material-ui/core/Slider";
+import Typography from "@material-ui/core/Typography";
+import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 import GeoSuggest from "react-geosuggest";
-import "./RoomCreationForm.css";
+import "./RoomCreationForm.scss";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -12,54 +15,142 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  typography: {
+    margin: theme.spacing(2)
   }
+
 }));
 
 const RoomCreationForm = props => {
   const classes = useStyles();
-  const geoRef = useRef();
+  const [nickname, setNickname] = useState();
+  const [latLng, setLatLng] = useState();
+  const [radius, setRadius] = useState(5);
+  const [description, setLocationDescription] = useState();
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleSuggestSelect = (data) => {
-    console.log(data);
+  function handleClose() {
+    setAnchorEl(null);
   }
 
-  const handleBlur = (d) => {
-    console.log('reached');
-    console.log(geoRef);
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
+  const handleSuggestSelect = (data) => {
+    setLocationDescription(data.description);
+    setLatLng(data.location);
+  }
+
+  const marks = [
+    {
+      value: 1,
+      label: '0km',
+    },
+    {
+      value: 5,
+      label: '5km',
+    },
+    {
+      value: 10,
+      label: '10km',
+    },
+    {
+      value: 15,
+      label: '15km',
+    },
+    {
+      value: 20,
+      label: '20km',
+    },
+    {
+      value: 25,
+      label: '25km',
+    },
+    {
+      value: 30,
+      label: '30km',
+    },
+  ];
+
+  function valuetext(value) {
+    return `${value}km`;
+  }
+
+  const handleSubmit = (event) => {
+    if (nickname && nickname.length > 0 && latLng && radius) {
+      // continue
+      console.log('reached')
+    } else {
+      // show popup error
+      setAnchorEl(event.currentTarget);
+    }
+  }
+
+  const handleNickChange = (el) => {
+    setNickname(el.target.value);
+  }
+
+  const handleRadiusChange = (event, value) => {
+    setRadius(value);
   }
 
   return (
     <form className={classes.form} noValidate>
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        name="nickname"
-        label="Your nickname"
-        type="text"
-        id="nickname"
+      <br />
+      <Typography gutterBottom>
+        What would you like to be known as?
+      </Typography>
+      <div className="input-wrap">
+        <input onChange={handleNickChange} className="input" placeholder="Nickname*" name="nickname" />
+      </div>
+      <br />
+      <Typography gutterBottom>
+        Where would you like to eat?
+      </Typography>
+      <GeoSuggest placeholder="Location*" onSuggestSelect={handleSuggestSelect} />
+      <br />
+      <Typography gutterBottom>
+        How far would you travel?
+      </Typography>
+      <Slider
+        onChange={handleRadiusChange}
+        defaultValue={5}
+        getAriaValueText={valuetext}
+        aria-labelledby="discrete-slider-custom"
+        valueLabelDisplay="auto"
+        step={1}
+        marks={marks}
+        min={1}
+        max={30}
       />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        name="location"
-        label="Where you would like to eat"
-        type="text"
-        id="location"
-      />
-      <GeoSuggest ref={geoRef} onBlur={handleBlur} onSuggestSelect={handleSuggestSelect} className="test" />
+
       <Button
-        type="submit"
         fullWidth
         variant="contained"
         color="primary"
+        onClick={handleSubmit}
         className={classes.submit}
       >
         Continue
       </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <Typography className={classes.typography}>Please fill out all the fields before continuing.</Typography>
+      </Popover>
     </form>
   );
 };
