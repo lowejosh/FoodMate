@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 import Popover from "@material-ui/core/Popover";
@@ -27,8 +26,9 @@ const RoomCreationForm = props => {
   const [nickname, setNickname] = useState();
   const [latLng, setLatLng] = useState();
   const [radius, setRadius] = useState(5);
-  const [description, setLocationDescription] = useState();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [, setLocationDescription] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [hasValues, setHasValues] = useState(false);
 
   function handleClose() {
     setAnchorEl(null);
@@ -81,7 +81,7 @@ const RoomCreationForm = props => {
   const handleSubmit = (event) => {
     if (nickname && nickname.length > 0 && latLng && radius) {
       // continue
-      console.log('reached')
+      setHasValues(true);
     } else {
       // show popup error
       setAnchorEl(event.currentTarget);
@@ -97,61 +97,73 @@ const RoomCreationForm = props => {
   }
 
   return (
-    <form className={classes.form} noValidate>
-      <br />
-      <Typography gutterBottom>
-        What would you like to be known as?
-      </Typography>
-      <div className="input-wrap">
-        <input onChange={handleNickChange} className="input" placeholder="Nickname*" name="nickname" />
-      </div>
-      <br />
-      <Typography gutterBottom>
-        Where would you like to eat?
-      </Typography>
-      <GeoSuggest placeholder="Location*" onSuggestSelect={handleSuggestSelect} />
-      <br />
-      <Typography gutterBottom>
-        How far would you travel?
-      </Typography>
-      <Slider
-        onChange={handleRadiusChange}
-        defaultValue={5}
-        getAriaValueText={valuetext}
-        aria-labelledby="discrete-slider-custom"
-        valueLabelDisplay="auto"
-        step={1}
-        marks={marks}
-        min={1}
-        max={30}
-      />
+    <div>
 
-      <Button
-        fullWidth
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        className={classes.submit}
-      >
-        Continue
+      {
+        !hasValues ? (
+          <form className={classes.form} noValidate>
+            <br />
+            <Typography gutterBottom>
+              What would you like to be known as?
+      </Typography>
+            <div className="input-wrap">
+              <input onChange={handleNickChange} className="input" placeholder="Nickname*" name="nickname" />
+            </div>
+            <br />
+            <Typography gutterBottom>
+              Where would you like to eat?
+      </Typography>
+            <GeoSuggest placeholder="Location*" onSuggestSelect={handleSuggestSelect} />
+            <br />
+            <Typography gutterBottom>
+              How far would you travel?
+      </Typography>
+            <Slider
+              onChange={handleRadiusChange}
+              defaultValue={5}
+              getAriaValueText={valuetext}
+              aria-labelledby="discrete-slider-custom"
+              valueLabelDisplay="auto"
+              step={1}
+              marks={marks}
+              min={1}
+              max={30}
+            />
+
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              className={classes.submit}
+            >
+              Continue
       </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
-        <Typography className={classes.typography}>Please fill out all the fields before continuing.</Typography>
-      </Popover>
-    </form>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <Typography className={classes.typography}>Please fill out all the fields before continuing.</Typography>
+            </Popover>
+          </form>
+
+        ) : (
+          <div>
+            cuisine stuff
+          </div>
+      )
+      }
+    </div>
   );
 };
 
