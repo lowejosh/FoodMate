@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import CreateIcon from "@material-ui/icons/Create";
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -37,34 +37,35 @@ var generateID = function () {
 
 export default function WelcomePage() {
   const classes = useStyles();
+  const [title, setTitle] = useState("Welcome");
+  const [subtitle, setSubtitle] = useState("Let's create your first room");
 
   // entry point for users with no ID -- generate one
-  let id = generateID()
-  console.log(id);
-
+  // let id = generateID()
+  // console.log(id);
 
   return (
     <Box className={classes.wrap} display="flex" justifyContent="center" alignItems="center">
-    <Fade in={id} mountOnEnter unmountOnExit>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <br />
-          <Avatar className={classes.avatar}>
-            <CreateIcon />
-          </Avatar>
-          <br />
-          <Typography component="h1" variant="h4">
-            Welcome!
-        </Typography>
-          <br />
-          <Typography component="h1" variant="h5">
-            Let's create your first room
-        </Typography>
-          <RoomCreationForm />
-        </div>
-      </Container>
-    </Fade>
+      <Fade in={true} mountOnEnter unmountOnExit>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <div className={classes.paper}>
+            <br />
+            <Avatar className={classes.avatar}>
+              <CreateIcon />
+            </Avatar>
+            <br />
+            <Typography component="h1" variant="h4">
+              {title}
+            </Typography>
+            <br />
+            <Typography component="h1" variant="h5">
+              {subtitle}
+            </Typography>
+            <RoomCreationForm changeTitleCallback={setTitle} changeSubtitleCallback={setSubtitle} />
+          </div>
+        </Container>
+      </Fade>
     </Box>
   );
 }

@@ -1,17 +1,18 @@
-import React from 'react';
-import 'typeface-roboto';
-import './App.css';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import WelcomePage from './components/Pages/WelcomePage';
-import Main from './components/Pages/Main';
-import './App.scss';
+import React from "react";
+import "typeface-roboto";
+import "./App.css";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import WelcomePage from "./components/Pages/WelcomePage";
+import Main from "./components/Pages/Main";
+import "./App.scss";
 
 const theme = createMuiTheme({
   palette: {
-    primary: { main: '#871812' },
-  },
+    primary: { main: "#871812" },
+    secondary: { main: "#ab5d59" }
+  }
 });
 
 const App = () => {
@@ -23,6 +24,6 @@ const App = () => {
       </Router>
     </ThemeProvider>
   );
-}
+};
 
 export default App;
