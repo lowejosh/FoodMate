@@ -158,10 +158,10 @@ const RoomCreationForm = props => {
           </form>
 
         ) : (
-          <div>
-            cuisine stuff
+            <div>
+              cuisine stuff
           </div>
-      )
+          )
       }
     </div>
   );
