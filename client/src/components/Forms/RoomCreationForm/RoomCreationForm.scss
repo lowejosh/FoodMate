@@ -4,9 +4,14 @@
   font-size: 16px;
 }
 
-.geosuggest__item--active {
+.geosuggest__item--active, .geosuggest__item:hover {
   background: #871812;
   color: #fff;
+  transition: 0.1s;
+}
+
+.geosuggest__item:hover {
+  cursor: pointer;
 }
 
 .geosuggest__item {
@@ -27,4 +32,9 @@
   background-color: #ededed;
   border: solid 1px #d3d3d3;
   margin: 0;
+}
+
+.fixed-width {
+  width: 100%;
+
 }

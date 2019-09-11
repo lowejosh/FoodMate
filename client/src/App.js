@@ -6,6 +6,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import WelcomePage from './components/Pages/WelcomePage';
 import Main from './components/Pages/Main';
+import './App.scss';
 
 const theme = createMuiTheme({
   palette: {

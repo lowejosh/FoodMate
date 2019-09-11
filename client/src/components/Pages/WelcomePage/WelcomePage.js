@@ -3,9 +3,11 @@ import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import CreateIcon from "@material-ui/icons/Create";
 import Typography from "@material-ui/core/Typography";
+import Fade from "@material-ui/core/Fade";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import RoomCreationForm from "../../Forms/RoomCreationForm/RoomCreationForm";
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -14,7 +16,6 @@ const useStyles = makeStyles(theme => ({
     }
   },
   paper: {
-    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -22,7 +23,12 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main
+  },
+  wrap: {
+    width: "100%",
+    height: "100%",
   }
+
 }));
 
 var generateID = function () {
@@ -38,23 +44,27 @@ export default function WelcomePage() {
 
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <br />
-        <Avatar className={classes.avatar}>
-          <CreateIcon />
-        </Avatar>
-        <br />
-        <Typography component="h1" variant="h4">
-          Welcome!
+    <Box className={classes.wrap} display="flex" justifyContent="center" alignItems="center">
+    <Fade in={id} mountOnEnter unmountOnExit>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <br />
+          <Avatar className={classes.avatar}>
+            <CreateIcon />
+          </Avatar>
+          <br />
+          <Typography component="h1" variant="h4">
+            Welcome!
         </Typography>
-        <br />
-        <Typography component="h1" variant="h5">
-          Let's create your first room
+          <br />
+          <Typography component="h1" variant="h5">
+            Let's create your first room
         </Typography>
-        <RoomCreationForm />
-      </div>
-    </Container>
+          <RoomCreationForm />
+        </div>
+      </Container>
+    </Fade>
+    </Box>
   );
 }
