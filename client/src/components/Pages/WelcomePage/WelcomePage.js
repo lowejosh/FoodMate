@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "center"
   },
   avatar: {
     margin: theme.spacing(1),
@@ -26,26 +26,22 @@ const useStyles = makeStyles(theme => ({
   },
   wrap: {
     width: "100%",
-    height: "100%",
+    height: "100%"
   }
-
 }));
-
-var generateID = function () {
-  return '_' + Math.random().toString(36).substr(2, 9);
-};
 
 export default function WelcomePage() {
   const classes = useStyles();
   const [title, setTitle] = useState("Welcome");
   const [subtitle, setSubtitle] = useState("Let's create your first room");
 
-  // entry point for users with no ID -- generate one
-  // let id = generateID()
-  // console.log(id);
-
   return (
-    <Box className={classes.wrap} display="flex" justifyContent="center" alignItems="center">
+    <Box
+      className={classes.wrap}
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+    >
       <Fade in={true} mountOnEnter unmountOnExit>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -62,7 +58,10 @@ export default function WelcomePage() {
             <Typography component="h1" variant="h5">
               {subtitle}
             </Typography>
-            <RoomCreationForm changeTitleCallback={setTitle} changeSubtitleCallback={setSubtitle} />
+            <RoomCreationForm
+              changeTitleCallback={setTitle}
+              changeSubtitleCallback={setSubtitle}
+            />
           </div>
         </Container>
       </Fade>

@@ -9,6 +9,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import GeoSuggest from "react-geosuggest";
 import axios from "axios";
 import "./RoomCreationForm.scss";
+import {
+  checkIfUserExists,
+  createUser,
+  addRoom
+} from "../../../utilities/LocalStorage";
 
 // material ui styles
 const useStyles = makeStyles(theme => ({
@@ -83,12 +88,14 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   const [locationData, setLocationData] = useState();
   const [update, setUpdate] = useState(0);
 
+  // handles closing the geosuggest dropdown
   function handleClose() {
     setOpen(false);
   }
 
   const id = open ? "simple-popover" : undefined;
 
+  // handles geosuggest selected value
   const handleSuggestSelect = data => {
     try {
       setLocationDescription(data.description);
@@ -98,6 +105,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
     }
   };
 
+  // handles cuisine click
   const handleCuisineClick = (el, index) => {
     setUpdate(update + 1);
     cuisineStates[index]
@@ -190,6 +198,18 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
       setPopupMessage("Please fill out all the fields before continuing.");
       setOpen(true);
     }
+  };
+
+  // handles create button
+  const handleCreate = () => {
+    if (checkIfUserExists()) {
+      // if user exists
+    } else {
+      // otherwise
+      createUser(); // create user
+    }
+
+    const roomID = addRoom();
   };
 
   // handles nickname state on input change
@@ -289,7 +309,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
             fullWidth
             variant="contained"
             color="primary"
-            // onClick={handleSubmit}
+            onClick={handleCreate}
             className={classes.submit}
           >
             Create

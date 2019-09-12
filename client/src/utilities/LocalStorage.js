@@ -15,9 +15,19 @@ const createUser = () => {
 };
 
 const checkIfUserExists = () => {
-  return getItem("userID");
+  return localStorage.getItem("userID");
 };
 
-const addRoom = () => {};
+const addRoom = () => {
+  let roomList = localStorage.getItem("roomList"); // retrieve room list
+  let newRoom = createID();
+  if (!roomList) {
+    roomList = newRoom + ",";
+  } else {
+    roomList += newRoom + ",";
+  }
+  localStorage.setItem("roomList", roomList);
+  return roomList;
+};
 
 export { createShortID, createID, createUser, checkIfUserExists, addRoom };
