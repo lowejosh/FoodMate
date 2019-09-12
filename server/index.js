@@ -10,6 +10,8 @@ const client = zomato.createClient({
 
 // setup
 server.use(cors());
+server.use(express.urlencoded());
+server.use(express.json());
 server.listen(PORT, () => {
   console.log(`Server Running on port: ${PORT}`);
 });
@@ -54,4 +56,11 @@ server.get("/top-cuisines/:lat/:lng", (req, res) => {
       }
     }
   );
+});
+
+server.post("/create-room", (req, res) => {
+  console.log(req.body);
+  console.log("=========");
+
+  return res.send("Received a POST");
 });

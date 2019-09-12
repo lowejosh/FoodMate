@@ -27,7 +27,7 @@ const addRoom = () => {
     roomList += newRoom + ",";
   }
   localStorage.setItem("roomList", roomList);
-  return roomList;
+  return newRoom;
 };
 
 export { createShortID, createID, createUser, checkIfUserExists, addRoom };

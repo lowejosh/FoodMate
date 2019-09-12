@@ -70,7 +70,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   const [nickname, setNickname] = useState();
   const [latLng, setLatLng] = useState();
   const [radius, setRadius] = useState(5);
-  const [, setLocationDescription] = useState();
+  const [locationDescription, setLocationDescription] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
   const [hasValues, setHasValues] = useState(false);
   const [popupMessage, setPopupMessage] = useState(
@@ -201,15 +201,41 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   };
 
   // handles create button
-  const handleCreate = () => {
-    if (checkIfUserExists()) {
+  const handleCreate = async () => {
+    let userID = checkIfUserExists();
+    if (userID) {
       // if user exists
     } else {
       // otherwise
-      createUser(); // create user
+      userID = createUser(); // create user
     }
+    console.log(userID);
 
     const roomID = addRoom();
+
+    // format the payload
+    const payload = {
+      roomID: roomID,
+      creatorID: userID,
+      users: [
+        {
+          id: userID,
+          lat: latLng.lat,
+          lng: latLng.lng,
+          locationDescription: locationDescription,
+          radius: radius,
+          cuisines: cuisineStates
+      },
+      ]
+      }
+
+    // send the payload to the server
+    const createRoomAPIURL = `http://localhost:8001/create-room`;
+    let res = await axios.post(createRoomAPIURL, payload);
+    let data = res.data;
+
+    // redirect to the new room !!!
+    window.location.href=`/room/${roomID}`;
   };
 
   // handles nickname state on input change
