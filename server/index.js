@@ -7,8 +7,7 @@ const PORT = process.env.PORT || 8000;
 const client = zomato.createClient({
   userKey: process.env.ZOMATO_API_KEY
 });
-const admin = require("./firebase/firebase-admin");
-console.log(admin.database());
+const firebase = require("./firebase/firebase-admin");
 
 // setup
 server.use(cors());
@@ -65,6 +64,13 @@ server.post("/create-room", (req, res) => {
   console.log("=========");
 
   // firebase stuff
+  firebase
+    .database()
+    .ref("/")
+    .once("value")
+    .then(snapshot => {
+      console.log(snapshot);
+    });
 
   return res.send("Received a POST");
 });
