@@ -85,7 +85,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
     3: false,
     4: false
   });
-  const [locationData, setLocationData] = useState();
+  const [topCuisines, setTopCuisines] = useState();
   const [update, setUpdate] = useState(0);
 
   // handles closing the geosuggest dropdown
@@ -115,9 +115,9 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
 
   // update the button style when clicked
   useEffect(() => {
-    if (locationData) {
+    if (topCuisines) {
       let res = [];
-      locationData.popularity.top_cuisines.map((el, index) => {
+      topCuisines.map((el, index) => {
         res.push(
           <Button
             onClick={e => {
@@ -139,9 +139,9 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   // create the initial cuisine buttons
   const createCuisineButtons = data => {
     // set the data
-    setLocationData(data);
+    setTopCuisines(data);
     let res = [];
-    data.popularity.top_cuisines.map((el, index) => {
+    data.map((el, index) => {
       res.push(
         <Button
           onClick={e => {
@@ -161,7 +161,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
 
   // fetch the cuisine info for given lat/lng
   const fetchCuisineInfo = async (latLng, event) => {
-    const cuisineAPIURL = `http://localhost:8001/location-info/${latLng.lat}/${latLng.lng}`;
+    const cuisineAPIURL = `http://localhost:8001/top-cuisines/${latLng.lat}/${latLng.lng}`;
     let res = await axios.get(cuisineAPIURL);
     let data = res.data;
     // if theres no cuisines
@@ -171,7 +171,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
       );
       setOpen(true);
     } else {
-      setCuisineButtons(createCuisineButtons(JSON.parse(data)));
+      setCuisineButtons(createCuisineButtons(data));
       if (changeSubtitleCallback) {
         changeSubtitleCallback(`What are your preferred cuisines?`);
       }
