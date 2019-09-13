@@ -16,7 +16,7 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import useStyles from "./useStyles";
 import axios from "axios";
 import { checkIfUserExists } from "../../../utilities/LocalStorage";
-import { Box, Fade, Modal, Link } from "@material-ui/core";
+import { Box, Fade, Modal, Link, Button } from "@material-ui/core";
 import Sidebar from "./Sidebar/Sidebar";
 import { Context } from "../../../Context";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -29,6 +29,11 @@ const Main = () => {
   const [verified, setVerified] = useState(false);
   const { roomID, setRoomID } = useContext(Context);
   const [inviteLink, setInviteLink] = useState();
+
+  // redirect
+  if (!roomID) {
+    window.location.href = "/welcome";
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -44,6 +49,20 @@ const Main = () => {
 
   const handleInviteClose = () => {
     setInviteOpen(false);
+  };
+
+  const copyToClipboard = text => {
+    let dummy = document.createElement("textarea");
+    dummy.style.display = "none";
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+  };
+
+  const handleCopy = () => {
+    copyToClipboard(inviteLink);
   };
 
   useEffect(() => {
@@ -63,11 +82,7 @@ const Main = () => {
     if (data.verified === false) {
       setVerified({ verified: false, message: data.message });
     } else {
-      let currentURL = window.location.href.substr(
-        0,
-        window.location.href.length - 5
-      );
-      setInviteLink(`${currentURL}/invite/${data.inviteID}`);
+      setInviteLink(`http://localhost:3000/invite/${data.inviteID}`);
       setVerified({ verified: true });
     }
     setVerifying(false);
@@ -80,7 +95,6 @@ const Main = () => {
     }
   }, [verifying, verifyRoom]);
 
-  console.log(roomID);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -196,7 +210,16 @@ const Main = () => {
               <Typography align="center" component="h1" variant="h5">
                 Invite someone to your room with the following link
                 <hr />
-                <Link href="#">{inviteLink}</Link>
+                <Link href={inviteLink}>{inviteLink}</Link>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCopy}
+                  className={classes.copy}
+                >
+                  Copy to clipboard
+                </Button>
               </Typography>
             ) : (
               <Typography component="h1" variant="h5">

@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EnterRoom = ({ initialTitle, initialSubtitle, type }) => {
+const EnterRoom = ({ initialTitle, initialSubtitle, type, inviteID }) => {
   const classes = useStyles();
   const [title, setTitle] = useState(initialTitle);
   const [subtitle, setSubtitle] = useState(initialSubtitle);
@@ -62,6 +62,7 @@ const EnterRoom = ({ initialTitle, initialSubtitle, type }) => {
               changeTitleCallback={setTitle}
               changeSubtitleCallback={setSubtitle}
               type={type}
+              inviteID={inviteID}
             />
           </div>
         </Container>

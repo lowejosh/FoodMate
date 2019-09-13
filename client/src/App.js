@@ -49,6 +49,7 @@ const App = () => {
       <EnterRoom
         initialTitle="Welcome"
         initialSubtitle="Let's create your first room"
+        type="create"
       />
     );
   };
@@ -63,12 +64,13 @@ const App = () => {
     );
   };
 
-  const JoinRoomComponent = () => {
+  const JoinRoomComponent = props => {
     return (
       <EnterRoom
         initialTitle="Join a room"
         initialSubtitle="Please enter your details"
         type="join"
+        inviteID={props.match.params.inviteID}
       />
     );
   };

@@ -13,7 +13,8 @@ import {
   checkIfUserExists,
   createUser,
   addRoom,
-  createID
+  createID,
+  joinRoom
 } from "../../../utilities/LocalStorage";
 import { Context } from "../../../Context";
 
@@ -69,7 +70,8 @@ const marks = [
 const RoomCreationForm = ({
   changeTitleCallback,
   changeSubtitleCallback,
-  type
+  type,
+  inviteID
 }) => {
   // states
   const classes = useStyles();
@@ -214,8 +216,8 @@ const RoomCreationForm = ({
   // handles create button
   const handleCreate = async () => {
     let userID = checkIfUserExists();
-    const roomID = addRoom();
-    const inviteID = createID();
+    const newRoomID = type === "create" ? addRoom() : null;
+    const newInviteID = createID();
     if (!userID) {
       userID = createUser(); // create user if they don't exist
     }
@@ -224,10 +226,10 @@ const RoomCreationForm = ({
     let payload;
     if (type === "create") {
       payload = {
-        roomID: roomID,
+        roomID: newRoomID,
         roomName: roomName,
         creatorID: userID,
-        inviteID: inviteID,
+        inviteID: newInviteID,
         users: [
           {
             id: userID,
@@ -242,9 +244,8 @@ const RoomCreationForm = ({
       };
     } else {
       payload = {
-        roomName: roomName,
         userID: userID,
-        roomID: roomID,
+        inviteID: inviteID,
         nickName: nickname,
         lat: latLng.lat,
         lng: latLng.lng,
@@ -253,18 +254,20 @@ const RoomCreationForm = ({
         cuisines: cuisineStates
       };
     }
-    console.log(payload);
 
     // send the payload to the server
     const APIURL =
       type === "create"
         ? "http://localhost:8001/create-room"
         : "http://localhost:8001/join-room";
-    await axios.post(APIURL, payload);
+    let res = await axios.post(APIURL, payload);
 
     // redirect to the new room !!!
-    setRoomID(roomID);
-
+    const finalRoomID = type === "create" ? newRoomID : res.data.roomID;
+    if (type === "join") {
+      joinRoom(res.data.roomID);
+    }
+    setRoomID(finalRoomID);
     window.location.href = "/home";
   };
 
@@ -382,29 +385,16 @@ const RoomCreationForm = ({
         <Box display="flex" flexDirection="column" justifyContent="center">
           <br />
           {cuisineButtons}
-          {type === "create" ? (
-            <Button
-              key="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleCreate}
-              className={classes.submit}
-            >
-              Create
-            </Button>
-          ) : (
-            <Button
-              key="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              // onClick={handleJoin}
-              className={classes.submit}
-            >
-              Join
-            </Button>
-          )}
+          <Button
+            key="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleCreate}
+            className={classes.submit}
+          >
+            {type === "create" ? "Create" : "Join"}
+          </Button>
         </Box>
       </Fade>
     </div>

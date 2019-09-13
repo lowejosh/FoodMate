@@ -156,26 +156,48 @@ server.post("/create-room", (req, res) => {
   res.json({ message: "Room created" });
 });
 
-// creates the room
+// joins the room
 server.post("/join-room", (req, res) => {
   let data = req.body;
-  // set the room user data
+  // get room data
+  let roomID;
+  let roomName;
   firebase
     .database()
-    .ref(`rooms/${data.roomID}/users/${userID}`)
-    .set({
-      nickName: data.nickName,
-      lat: data.lat,
-      lng: data.lng,
-      locationDescription: data.locationDescription,
-      radius: data.radius,
-      cuisines: data.cuisines
-    });
+    .ref("rooms/")
+    .once("value")
+    .then(snapshot => {
+      let success = false;
+      snapshot.forEach(child => {
+        if (child.val().inviteID === data.inviteID) {
+          success = true;
+          roomID = child.key;
+          roomName = child.val().roomName;
+        }
+      });
 
-  // set the user room data
-  firebase
-    .database()
-    .ref(`users/${data.userID}/rooms/${data.roomID}`)
-    .set(data.roomName);
-  res.json({ message: "Room created" });
+      if (!success) {
+        res.json({ failed: true });
+      } else {
+        // set the room user data
+        firebase
+          .database()
+          .ref(`rooms/${roomID}/users/${data.userID}`)
+          .set({
+            nickName: data.nickName,
+            lat: data.lat,
+            lng: data.lng,
+            locationDescription: data.locationDescription,
+            radius: data.radius,
+            cuisines: data.cuisines
+          });
+
+        // set the user room data
+        firebase
+          .database()
+          .ref(`users/${data.userID}/rooms/${roomID}`)
+          .set(roomName);
+        res.json({ roomID: roomID });
+      }
+    });
 });

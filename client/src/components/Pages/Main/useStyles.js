@@ -90,6 +90,9 @@ const useStyles = makeStyles(theme => ({
   },
   modalPopup: {
     padding: theme.spacing(6)
+  },
+  copy: {
+    margin: theme.spacing(3, 0, 2)
   }
 }));
 

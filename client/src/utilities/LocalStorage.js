@@ -31,6 +31,18 @@ const addRoom = () => {
   return newRoom;
 };
 
+const joinRoom = roomID => {
+  let roomList = localStorage.getItem("roomList"); // retrieve room list
+  if (!roomList) {
+    roomList = roomID + ",";
+  } else {
+    roomList += roomID + ",";
+  }
+  localStorage.setItem("roomList", roomList);
+  localStorage.setItem("redirectRoom", roomID);
+  return roomID;
+};
+
 const getRooms = () => {
   return localStorage.getItem("roomList");
 };
@@ -49,6 +61,7 @@ export {
   createUser,
   checkIfUserExists,
   addRoom,
+  joinRoom,
   getRooms,
   clearData,
   getRedirectRoom
