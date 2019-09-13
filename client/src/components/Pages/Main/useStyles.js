@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column"
   },
   fixedHeight: {
-    height: 240
+    height: 400
   },
   sidebarList: {
     padding: 0
@@ -93,6 +93,9 @@ const useStyles = makeStyles(theme => ({
   },
   copy: {
     margin: theme.spacing(3, 0, 2)
+  },
+  noPadding: {
+    padding: 0
   }
 }));
 

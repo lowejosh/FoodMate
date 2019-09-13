@@ -1,4 +1,5 @@
 const dotenv = require("dotenv").config();
+const axios = require("axios");
 const express = require("express");
 const zomato = require("zomato");
 const cors = require("cors");
@@ -57,6 +58,71 @@ server.get("/top-cuisines/:lat/:lng", (req, res) => {
       }
     }
   );
+});
+
+server.get("/location-name/:roomID", (req, res) => {
+  const roomID = req.params.roomID;
+  firebase
+    .database()
+    .ref("rooms/" + roomID)
+    .once("value")
+    .then(function(snapshot) {
+      res.json({
+        locationDescription: snapshot.val().locationDescription,
+        roomName: snapshot.val().roomName,
+        lat: snapshot.val().lat,
+        lng: snapshot.val().lng
+      });
+    });
+});
+
+server.get("/restaurants/:roomID", (req, res) => {
+  const roomID = req.params.roomID;
+  let lat;
+  let lng;
+
+  const fetchRestaurants = async (lat, lng, radius) => {
+    // does 2 calls becomes zomato limits to 20 results -- need 40
+    const config = { headers: { "user-key": process.env.ZOMATO_API_KEY } };
+    const URL = `https://developers.zomato.com/api/v2.1/search?lat=${lat}&lon=${lng}&start=0&count=20&radius=${radius}&sort=real_distance`;
+    const URL2 = `https://developers.zomato.com/api/v2.1/search?lat=${lat}&lon=${lng}&start=20&count=20&radius=${radius}$sort=real_distance`;
+    await axios.get(URL, config).then(async data => {
+      await axios.get(URL2, config).then(data2 => {
+        // create the payload
+        let restaurants = data.data.restaurants.concat(data2.data.restaurants);
+        let payload = [];
+        restaurants.forEach(i => {
+          let el = i.restaurant;
+          payload.push({
+            id: el.id,
+            name: el.name,
+            cuisines: el.cuisines.split(", "),
+            establishment: el.establishment,
+            lat: el.location.latitude,
+            lng: el.location.longitude,
+            address: el.location.address,
+            url: el.url
+          });
+        });
+
+        res.json({ payload: payload, lat: lat, lng: lng, radius: radius });
+      });
+    });
+  };
+
+  // get lat and lng
+  firebase
+    .database()
+    .ref("rooms/" + roomID)
+    .once("value")
+    .then(snapshot => {
+      lat = snapshot.val().lat;
+      lng = snapshot.val().lng;
+      radius = snapshot.val().radius * 1000;
+
+      // get zomato stuff from axios because client.search isn't working...
+      fetchRestaurants(lat, lng, radius);
+    });
 });
 
 // server.get("/load-room/:roomID", (req, res) => {
@@ -135,13 +201,13 @@ server.post("/create-room", (req, res) => {
       creatorID: data.creatorID,
       roomName: data.roomName,
       inviteID: data.inviteID,
+      lat: data.lat,
+      lng: data.lng,
+      locationDescription: data.locationDescription,
+      radius: data.radius,
       users: {
         [data.users[0].id]: {
           nickName: data.users[0].nickName,
-          lat: data.users[0].lat,
-          lng: data.users[0].lng,
-          locationDescription: data.users[0].locationDescription,
-          radius: data.users[0].radius,
           cuisines: data.users[0].cuisines
         }
       }
@@ -185,10 +251,6 @@ server.post("/join-room", (req, res) => {
           .ref(`rooms/${roomID}/users/${data.userID}`)
           .set({
             nickName: data.nickName,
-            lat: data.lat,
-            lng: data.lng,
-            locationDescription: data.locationDescription,
-            radius: data.radius,
             cuisines: data.cuisines
           });
 

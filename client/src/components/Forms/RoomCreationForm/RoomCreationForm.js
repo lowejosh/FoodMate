@@ -71,7 +71,8 @@ const RoomCreationForm = ({
   changeTitleCallback,
   changeSubtitleCallback,
   type,
-  inviteID
+  inviteID,
+  givenLatLng
 }) => {
   // states
   const classes = useStyles();
@@ -126,6 +127,19 @@ const RoomCreationForm = ({
     [cuisineStates, update]
   );
 
+  // initial check for given lat & lng for join type
+  useEffect(() => {
+    console.log(givenLatLng);
+    console.log(type);
+    if (type === "join") {
+      if (givenLatLng) {
+        console.log("reached");
+        setLatLng(givenLatLng);
+      }
+    }
+  }, []);
+
+  // fetch the roomname and location if joining
   // update the button style when clicked
   useEffect(() => {
     if (topCuisines) {
@@ -203,7 +217,11 @@ const RoomCreationForm = ({
   // handles submit button for location/nickname
   const handleSubmit = event => {
     setAnchorEl(event.currentTarget);
-    if (nickname && nickname.length > 0 && latLng && radius) {
+    // if all forms are filled for both types
+    if (
+      (nickname && nickname.length > 0 && latLng && radius) ||
+      (type === "join" && nickname && nickname.length > 0 && latLng)
+    ) {
       // continue to cuisine stuff
       fetchCuisineInfo(latLng);
     } else {
@@ -230,14 +248,14 @@ const RoomCreationForm = ({
         roomName: roomName,
         creatorID: userID,
         inviteID: newInviteID,
+        lat: latLng.lat,
+        lng: latLng.lng,
+        locationDescription: locationDescription,
+        radius: radius,
         users: [
           {
             id: userID,
             nickName: nickname,
-            lat: latLng.lat,
-            lng: latLng.lng,
-            locationDescription: locationDescription,
-            radius: radius,
             cuisines: cuisineStates
           }
         ]
@@ -247,10 +265,6 @@ const RoomCreationForm = ({
         userID: userID,
         inviteID: inviteID,
         nickName: nickname,
-        lat: latLng.lat,
-        lng: latLng.lng,
-        locationDescription: locationDescription,
-        radius: radius,
         cuisines: cuisineStates
       };
     }
@@ -311,7 +325,6 @@ const RoomCreationForm = ({
               </div>
             </div>
           ) : null}
-
           <br />
           <Typography gutterBottom>
             What would you like to be known as?
@@ -325,26 +338,30 @@ const RoomCreationForm = ({
             />
           </div>
           <br />
-          <Typography gutterBottom>Where would you like to eat?</Typography>
-          <GeoSuggest
-            placeholder="Location*"
-            onSuggestSelect={handleSuggestSelect}
-          />
-          <br />
-          <Typography gutterBottom>
-            How far from there would you travel?
-          </Typography>
-          <Slider
-            onChange={handleRadiusChange}
-            defaultValue={5}
-            getAriaValueText={valuetext}
-            aria-labelledby="discrete-slider-custom"
-            valueLabelDisplay="auto"
-            step={1}
-            marks={marks}
-            min={1}
-            max={30}
-          />
+          {type === "create" ? (
+            <div>
+              <Typography gutterBottom>Where would you like to eat?</Typography>
+              <GeoSuggest
+                placeholder="Location*"
+                onSuggestSelect={handleSuggestSelect}
+              />
+              <br />
+              <Typography gutterBottom>
+                How far from there would you travel?
+              </Typography>
+              <Slider
+                onChange={handleRadiusChange}
+                defaultValue={5}
+                getAriaValueText={valuetext}
+                aria-labelledby="discrete-slider-custom"
+                valueLabelDisplay="auto"
+                step={1}
+                marks={marks}
+                min={1}
+                max={30}
+              />
+            </div>
+          ) : null}
 
           <Button
             fullWidth

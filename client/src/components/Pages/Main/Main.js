@@ -20,6 +20,8 @@ import { Box, Fade, Modal, Link, Button } from "@material-ui/core";
 import Sidebar from "./Sidebar/Sidebar";
 import { Context } from "../../../Context";
 import Backdrop from "@material-ui/core/Backdrop";
+import Map from "./Map/Map";
+import MapWrapper from "./Map/Map";
 
 const Main = () => {
   const classes = useStyles();
@@ -53,7 +55,7 @@ const Main = () => {
 
   const copyToClipboard = text => {
     let dummy = document.createElement("textarea");
-    dummy.style.display = "none";
+    // dummy.style.display = "none";
     document.body.appendChild(dummy);
     dummy.value = text;
     dummy.select();
@@ -72,6 +74,11 @@ const Main = () => {
   }, [roomID]);
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const fixedHeightPaperNoPadding = clsx(
+    classes.paper,
+    classes.fixedHeight,
+    classes.noPadding
+  );
 
   const verifyRoom = useCallback(async () => {
     // const roomID = props.match.params.roomID;
@@ -95,7 +102,7 @@ const Main = () => {
     }
   }, [verifying, verifyRoom]);
 
-  return (
+  return roomID ? (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
@@ -159,7 +166,9 @@ const Main = () => {
               <Grid container spacing={3}>
                 {/* Chart */}
                 <Grid item xs={12} md={8} lg={8}>
-                  <Paper className={fixedHeightPaper}>Map</Paper>
+                  <Paper className={fixedHeightPaperNoPadding}>
+                    <MapWrapper />
+                  </Paper>
                 </Grid>
                 {/* Recent Deposits */}
                 <Grid item xs={12} md={4} lg={4}>
@@ -230,7 +239,7 @@ const Main = () => {
         </Fade>
       </Modal>
     </div>
-  );
+  ) : null;
 };
 
 export default Main;

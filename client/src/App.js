@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "typeface-roboto";
 import "./App.css";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -6,13 +6,14 @@ import { ThemeProvider } from "@material-ui/styles";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import EnterRoom from "./components/Pages/EnterRoom";
 import Main from "./components/Pages/Main";
+import axios from "axios";
 import "./App.scss";
 import {
   checkIfUserExists,
   getRooms,
   clearData
 } from "./utilities/LocalStorage";
-import { ContextProvider } from "./Context";
+import { ContextProvider, Context } from "./Context";
 
 const theme = createMuiTheme({
   palette: {
@@ -65,14 +66,47 @@ const App = () => {
   };
 
   const JoinRoomComponent = props => {
-    return (
+    const [fetching, setFetching] = useState(true);
+    const [initialTitle, setInitialTitle] = useState("");
+    const [initialSubtitle, setInitialSubTitle] = useState("");
+    const [latLng, setLatLng] = useState("");
+    const { roomID } = useContext(Context);
+
+    const fetchTitleData = async () => {
+      const APIURL = `http://localhost:8001/location-name/${roomID}/`;
+      let res = await axios.get(APIURL);
+      let data = res.data;
+      if (data.message) {
+        // error
+        console.error(data.message);
+        setFetching(false);
+      } else {
+        // success
+        setInitialTitle(data.roomName);
+        setInitialSubTitle(data.locationDescription);
+        setLatLng({
+          lat: data.lat,
+          lng: data.lng
+        });
+        setFetching(false);
+      }
+    };
+
+    useEffect(() => {
+      if (fetching) {
+        fetchTitleData();
+      }
+    }, []);
+
+    return !fetching ? (
       <EnterRoom
-        initialTitle="Join a room"
-        initialSubtitle="Please enter your details"
+        initialTitle={initialTitle}
+        initialSubtitle={initialSubtitle}
+        givenLatLng={latLng}
         type="join"
         inviteID={props.match.params.inviteID}
       />
-    );
+    ) : null;
   };
 
   return (
