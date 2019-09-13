@@ -83,10 +83,7 @@ server.get("/verify-room/:roomID/:userID", (req, res) => {
       let verified = false;
       if (data) {
         for (user in data.users) {
-          console.log(userID + " : " + user);
-          console.log(data.users[user]);
           if (userID === user) {
-            console.log("successful match");
             verified = true;
           }
         }
@@ -110,13 +107,33 @@ server.get("/verify-room/:roomID/:userID", (req, res) => {
     });
 });
 
+// returns the room list for a given user
+server.get("/list-data/:userID", (req, res) => {
+  const userID = req.params.userID;
+  firebase
+    .database()
+    .ref("users/" + userID)
+    .once("value")
+    .then(function(snapshot) {
+      let data = snapshot.val();
+      if (data) {
+        res.json(data.rooms);
+      } else {
+        res.json(null);
+      }
+    });
+});
+
+// creates the room
 server.post("/create-room", (req, res) => {
   let data = req.body;
+  // set the room data
   firebase
     .database()
     .ref("rooms/" + data.roomID)
     .set({
       creatorID: data.creatorID,
+      roomName: data.roomName,
       inviteID: data.inviteID,
       users: {
         [data.users[0].id]: {
@@ -129,5 +146,16 @@ server.post("/create-room", (req, res) => {
         }
       }
     });
+
+  // set the user data
+  firebase
+    .database()
+    .ref("users/" + data.creatorID)
+    .set({
+      rooms: {
+        [data.roomID]: data.roomName
+      }
+    });
+
   res.json({ message: "Room created" });
 });

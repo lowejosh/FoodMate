@@ -61,6 +61,7 @@ export default function WelcomePage() {
             <RoomCreationForm
               changeTitleCallback={setTitle}
               changeSubtitleCallback={setSubtitle}
+              type={"create"}
             />
           </div>
         </Container>

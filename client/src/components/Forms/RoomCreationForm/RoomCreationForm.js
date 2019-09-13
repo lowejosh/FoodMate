@@ -65,10 +65,15 @@ const marks = [
   }
 ];
 
-const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
+const RoomCreationForm = ({
+  changeTitleCallback,
+  changeSubtitleCallback,
+  type
+}) => {
   // states
   const classes = useStyles();
   const [nickname, setNickname] = useState();
+  const [roomName, setRoomName] = useState();
   const [latLng, setLatLng] = useState();
   const [radius, setRadius] = useState(5);
   const [locationDescription, setLocationDescription] = useState();
@@ -216,6 +221,7 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
     // format the payload
     const payload = {
       roomID: roomID,
+      roomName: roomName,
       creatorID: userID,
       inviteID: inviteID,
       users: [
@@ -244,6 +250,11 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
     setNickname(el.target.value);
   };
 
+  // handles nickname state on input change
+  const handleRoomNameChange = el => {
+    setRoomName(el.target.value);
+  };
+
   // handles radius state on input change
   const handleRadiusChange = (event, value) => {
     setRadius(value);
@@ -258,6 +269,23 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
         unmountOnExit
       >
         <form className={classes.form} noValidate>
+          {type === "create" ? (
+            <div>
+              <br />
+              <Typography gutterBottom>
+                What would you like to name the room?
+              </Typography>
+              <div className="input-wrap">
+                <input
+                  onChange={handleRoomNameChange}
+                  className="input"
+                  placeholder="Room name*"
+                  name="roomName"
+                />
+              </div>
+            </div>
+          ) : null}
+
           <br />
           <Typography gutterBottom>
             What would you like to be known as?
@@ -331,16 +359,29 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
         <Box display="flex" flexDirection="column" justifyContent="center">
           <br />
           {cuisineButtons}
-          <Button
-            key="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleCreate}
-            className={classes.submit}
-          >
-            Create
-          </Button>
+          {type === "create" ? (
+            <Button
+              key="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleCreate}
+              className={classes.submit}
+            >
+              Create
+            </Button>
+          ) : (
+            <Button
+              key="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              // onClick={handleJoin}
+              className={classes.submit}
+            >
+              Join
+            </Button>
+          )}
         </Box>
       </Fade>
     </div>

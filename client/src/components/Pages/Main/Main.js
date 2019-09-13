@@ -4,7 +4,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -14,11 +13,11 @@ import Paper from "@material-ui/core/Paper";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import { mainListItems } from "./listItems";
 import useStyles from "./useStyles";
 import axios from "axios";
 import { checkIfUserExists } from "../../../utilities/LocalStorage";
-import { LinearProgress, CircularProgress, Box, Fade } from "@material-ui/core";
+import { Box, Fade } from "@material-ui/core";
+import Sidebar from "./Sidebar/Sidebar";
 
 const Main = props => {
   const classes = useStyles();
@@ -105,7 +104,7 @@ const Main = props => {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <Sidebar />
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
