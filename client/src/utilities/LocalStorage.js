@@ -27,6 +27,7 @@ const addRoom = () => {
     roomList += newRoom + ",";
   }
   localStorage.setItem("roomList", roomList);
+  localStorage.setItem("redirectRoom", newRoom);
   return newRoom;
 };
 
@@ -38,6 +39,10 @@ const clearData = () => {
   localStorage.clear();
 };
 
+const getRedirectRoom = () => {
+  return localStorage.getItem("redirectRoom");
+};
+
 export {
   createShortID,
   createID,
@@ -45,5 +50,6 @@ export {
   checkIfUserExists,
   addRoom,
   getRooms,
-  clearData
+  clearData,
+  getRedirectRoom
 };

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import "typeface-roboto";
 import "./App.css";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
-import WelcomePage from "./components/Pages/WelcomePage";
+import EnterRoom from "./components/Pages/EnterRoom";
 import Main from "./components/Pages/Main";
 import "./App.scss";
 import {
@@ -12,6 +12,7 @@ import {
   getRooms,
   clearData
 } from "./utilities/LocalStorage";
+import { ContextProvider } from "./Context";
 
 const theme = createMuiTheme({
   palette: {
@@ -27,8 +28,7 @@ const App = () => {
 
     if (checkIfUserExists()) {
       if (rooms) {
-        let firstRoom = rooms.split(",")[0];
-        redirectPath = `/room/${firstRoom}`;
+        redirectPath = "/home";
       } else {
         clearData();
         redirectPath = "/welcome";
@@ -44,13 +44,46 @@ const App = () => {
     );
   };
 
+  const FirstRoomComponent = () => {
+    return (
+      <EnterRoom
+        initialTitle="Welcome"
+        initialSubtitle="Let's create your first room"
+      />
+    );
+  };
+
+  const CreateRoomComponent = () => {
+    return (
+      <EnterRoom
+        initialTitle="Create a new room"
+        initialSubtitle="Please enter your room details"
+        type="create"
+      />
+    );
+  };
+
+  const JoinRoomComponent = () => {
+    return (
+      <EnterRoom
+        initialTitle="Join a room"
+        initialSubtitle="Please enter your details"
+        type="join"
+      />
+    );
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <Route exact path="/" component={InitComponent} />
-        <Route path="/room/:roomID" component={Main} />
-        <Route exact path="/welcome" component={WelcomePage} />
-      </Router>
+      <ContextProvider>
+        <Router>
+          <Route exact path="/" component={InitComponent} />
+          <Route path="/home" component={Main} />
+          <Route exact path="/welcome" component={FirstRoomComponent} />
+          <Route exact path="/create" component={CreateRoomComponent} />
+          <Route exact path="/invite/:inviteID" component={JoinRoomComponent} />
+        </Router>
+      </ContextProvider>
     </ThemeProvider>
   );
 };

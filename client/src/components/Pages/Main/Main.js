@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import clsx from "clsx";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,14 +16,19 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import useStyles from "./useStyles";
 import axios from "axios";
 import { checkIfUserExists } from "../../../utilities/LocalStorage";
-import { Box, Fade } from "@material-ui/core";
+import { Box, Fade, Modal, Link } from "@material-ui/core";
 import Sidebar from "./Sidebar/Sidebar";
+import { Context } from "../../../Context";
+import Backdrop from "@material-ui/core/Backdrop";
 
-const Main = props => {
+const Main = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
+  const { roomID, setRoomID } = useContext(Context);
+  const [inviteLink, setInviteLink] = useState();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -33,10 +38,24 @@ const Main = props => {
     setOpen(false);
   };
 
+  const handleInviteOpen = () => {
+    setInviteOpen(true);
+  };
+
+  const handleInviteClose = () => {
+    setInviteOpen(false);
+  };
+
+  useEffect(() => {
+    if (!verifying) {
+      setVerifying(true);
+    }
+  }, [roomID]);
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const verifyRoom = useCallback(async () => {
-    const roomID = props.match.params.roomID;
+    // const roomID = props.match.params.roomID;
     const userID = checkIfUserExists();
     const verifyRoomAPIURL = `http://localhost:8001/verify-room/${roomID}/${userID}`;
     let res = await axios.get(verifyRoomAPIURL);
@@ -44,10 +63,16 @@ const Main = props => {
     if (data.verified === false) {
       setVerified({ verified: false, message: data.message });
     } else {
+      let currentURL = window.location.href.substr(
+        0,
+        window.location.href.length - 5
+      );
+      setInviteLink(`${currentURL}/invite/${data.inviteID}`);
       setVerified({ verified: true });
     }
     setVerifying(false);
-  }, [props.match.params.roomID]);
+  }, [roomID]);
+  // }, [props.match.params.roomID]);
 
   useEffect(() => {
     if (verifying) {
@@ -55,6 +80,7 @@ const Main = props => {
     }
   }, [verifying, verifyRoom]);
 
+  console.log(roomID);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -82,10 +108,10 @@ const Main = props => {
             noWrap
             className={classes.title}
           >
-            FoodMate
+            FoodMate - {roomID}
           </Typography>
           {verified.verified ? (
-            <IconButton color="inherit">
+            <IconButton onClick={handleInviteOpen} color="inherit">
               <PersonAddIcon />
             </IconButton>
           ) : null}
@@ -104,7 +130,7 @@ const Main = props => {
           </IconButton>
         </div>
         <Divider />
-        <Sidebar />
+        <Sidebar roomID={roomID} setRoomID={setRoomID} />
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
@@ -150,6 +176,36 @@ const Main = props => {
         </Container>
       </main>
       )}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classes.modal}
+        open={inviteOpen}
+        onClose={handleInviteClose}
+        closeAfterTransition
+        disableAutoFocus={true}
+        disableEnforceFocus={true}
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500
+        }}
+      >
+        <Fade in={inviteOpen}>
+          <div className={clsx(classes.paper, classes.modalPopup)}>
+            {inviteLink ? (
+              <Typography align="center" component="h1" variant="h5">
+                Invite someone to your room with the following link
+                <hr />
+                <Link href="#">{inviteLink}</Link>
+              </Typography>
+            ) : (
+              <Typography component="h1" variant="h5">
+                There was an error in retrieving your invite link
+              </Typography>
+            )}
+          </div>
+        </Fade>
+      </Modal>
     </div>
   );
 };

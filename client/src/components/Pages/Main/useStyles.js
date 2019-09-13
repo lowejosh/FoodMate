@@ -71,6 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
     display: "flex",
     overflow: "auto",
     flexDirection: "column"
@@ -80,6 +81,15 @@ const useStyles = makeStyles(theme => ({
   },
   sidebarList: {
     padding: 0
+  },
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    outline: 0
+  },
+  modalPopup: {
+    padding: theme.spacing(6)
   }
 }));
 

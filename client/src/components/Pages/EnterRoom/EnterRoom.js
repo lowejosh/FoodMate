@@ -30,10 +30,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function WelcomePage() {
+const EnterRoom = ({ initialTitle, initialSubtitle, type }) => {
   const classes = useStyles();
-  const [title, setTitle] = useState("Welcome");
-  const [subtitle, setSubtitle] = useState("Let's create your first room");
+  const [title, setTitle] = useState(initialTitle);
+  const [subtitle, setSubtitle] = useState(initialSubtitle);
 
   return (
     <Box
@@ -61,11 +61,13 @@ export default function WelcomePage() {
             <RoomCreationForm
               changeTitleCallback={setTitle}
               changeSubtitleCallback={setSubtitle}
-              type={"create"}
+              type={type}
             />
           </div>
         </Container>
       </Fade>
     </Box>
   );
-}
+};
+
+export default EnterRoom;

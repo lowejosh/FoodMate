@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import Button from "@material-ui/core/Button";
 import Slider from "@material-ui/core/Slider";
 import Fade from "@material-ui/core/Fade";
@@ -15,6 +15,7 @@ import {
   addRoom,
   createID
 } from "../../../utilities/LocalStorage";
+import { Context } from "../../../Context";
 
 // material ui styles
 const useStyles = makeStyles(theme => ({
@@ -93,6 +94,7 @@ const RoomCreationForm = ({
   });
   const [topCuisines, setTopCuisines] = useState();
   const [update, setUpdate] = useState(0);
+  const { setRoomID } = useContext(Context);
 
   // handles closing the geosuggest dropdown
   function handleClose() {
@@ -169,7 +171,7 @@ const RoomCreationForm = ({
   };
 
   // fetch the cuisine info for given lat/lng
-  const fetchCuisineInfo = async (latLng, event) => {
+  const fetchCuisineInfo = async latLng => {
     const cuisineAPIURL = `http://localhost:8001/top-cuisines/${latLng.lat}/${latLng.lng}`;
     let res = await axios.get(cuisineAPIURL);
     let data = res.data;
@@ -201,7 +203,7 @@ const RoomCreationForm = ({
     setAnchorEl(event.currentTarget);
     if (nickname && nickname.length > 0 && latLng && radius) {
       // continue to cuisine stuff
-      fetchCuisineInfo(latLng, event);
+      fetchCuisineInfo(latLng);
     } else {
       // show popup error
       setPopupMessage("Please fill out all the fields before continuing.");
@@ -219,30 +221,51 @@ const RoomCreationForm = ({
     }
 
     // format the payload
-    const payload = {
-      roomID: roomID,
-      roomName: roomName,
-      creatorID: userID,
-      inviteID: inviteID,
-      users: [
-        {
-          id: userID,
-          nickName: nickname,
-          lat: latLng.lat,
-          lng: latLng.lng,
-          locationDescription: locationDescription,
-          radius: radius,
-          cuisines: cuisineStates
-        }
-      ]
-    };
+    let payload;
+    if (type === "create") {
+      payload = {
+        roomID: roomID,
+        roomName: roomName,
+        creatorID: userID,
+        inviteID: inviteID,
+        users: [
+          {
+            id: userID,
+            nickName: nickname,
+            lat: latLng.lat,
+            lng: latLng.lng,
+            locationDescription: locationDescription,
+            radius: radius,
+            cuisines: cuisineStates
+          }
+        ]
+      };
+    } else {
+      payload = {
+        roomName: roomName,
+        userID: userID,
+        roomID: roomID,
+        nickName: nickname,
+        lat: latLng.lat,
+        lng: latLng.lng,
+        locationDescription: locationDescription,
+        radius: radius,
+        cuisines: cuisineStates
+      };
+    }
+    console.log(payload);
 
     // send the payload to the server
-    const createRoomAPIURL = `http://localhost:8001/create-room`;
-    await axios.post(createRoomAPIURL, payload);
+    const APIURL =
+      type === "create"
+        ? "http://localhost:8001/create-room"
+        : "http://localhost:8001/join-room";
+    await axios.post(APIURL, payload);
 
     // redirect to the new room !!!
-    window.location.href = `/room/${roomID}`;
+    setRoomID(roomID);
+
+    window.location.href = "/home";
   };
 
   // handles nickname state on input change

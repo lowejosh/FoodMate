@@ -97,7 +97,7 @@ server.get("/verify-room/:roomID/:userID", (req, res) => {
 
       // response
       if (verified) {
-        res.json({ verified: true });
+        res.json({ verified: true, inviteID: data.inviteID });
       } else {
         res.json({
           verified: false,
@@ -150,12 +150,32 @@ server.post("/create-room", (req, res) => {
   // set the user data
   firebase
     .database()
-    .ref("users/" + data.creatorID)
+    .ref(`users/${data.creatorID}/rooms/${data.roomID}`)
+    .set(data.roomName);
+
+  res.json({ message: "Room created" });
+});
+
+// creates the room
+server.post("/join-room", (req, res) => {
+  let data = req.body;
+  // set the room user data
+  firebase
+    .database()
+    .ref(`rooms/${data.roomID}/users/${userID}`)
     .set({
-      rooms: {
-        [data.roomID]: data.roomName
-      }
+      nickName: data.nickName,
+      lat: data.lat,
+      lng: data.lng,
+      locationDescription: data.locationDescription,
+      radius: data.radius,
+      cuisines: data.cuisines
     });
 
+  // set the user room data
+  firebase
+    .database()
+    .ref(`users/${data.userID}/rooms/${data.roomID}`)
+    .set(data.roomName);
   res.json({ message: "Room created" });
 });
