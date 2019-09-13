@@ -59,18 +59,75 @@ server.get("/top-cuisines/:lat/:lng", (req, res) => {
   );
 });
 
-server.post("/create-room", (req, res) => {
-  console.log(req.body);
-  console.log("=========");
+// server.get("/load-room/:roomID", (req, res) => {
+//   const roomID = req.params.roomID;
+//   firebase
+//     .database()
+//     .ref("rooms/" + roomID)
+//     .once("value")
+//     .then(function(snapshot) {
+//       res.json(snapshot.val());
+//     });
+// });
 
-  // firebase stuff
+server.get("/verify-room/:roomID/:userID", (req, res) => {
+  const roomID = req.params.roomID;
+  const userID = req.params.userID;
   firebase
     .database()
-    .ref("/")
+    .ref("rooms/" + roomID)
     .once("value")
-    .then(snapshot => {
-      console.log(snapshot);
-    });
+    .then(function(snapshot) {
+      // check if theres a match for the user in the room
+      let data = snapshot.val();
+      let verified = false;
+      if (data) {
+        for (user in data.users) {
+          console.log(userID + " : " + user);
+          console.log(data.users[user]);
+          if (userID === user) {
+            console.log("successful match");
+            verified = true;
+          }
+        }
+      } else {
+        res.json({
+          verified: false,
+          message: "Sorry, this room does not exist."
+        });
+        return;
+      }
 
-  return res.send("Received a POST");
+      // response
+      if (verified) {
+        res.json({ verified: true });
+      } else {
+        res.json({
+          verified: false,
+          message: "Sorry, you do not have permission to view this room."
+        });
+      }
+    });
+});
+
+server.post("/create-room", (req, res) => {
+  let data = req.body;
+  firebase
+    .database()
+    .ref("rooms/" + data.roomID)
+    .set({
+      creatorID: data.creatorID,
+      inviteID: data.inviteID,
+      users: {
+        [data.users[0].id]: {
+          nickName: data.users[0].nickName,
+          lat: data.users[0].lat,
+          lng: data.users[0].lng,
+          locationDescription: data.users[0].locationDescription,
+          radius: data.users[0].radius,
+          cuisines: data.users[0].cuisines
+        }
+      }
+    });
+  res.json({ message: "Room created" });
 });

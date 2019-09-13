@@ -30,4 +30,20 @@ const addRoom = () => {
   return newRoom;
 };
 
-export { createShortID, createID, createUser, checkIfUserExists, addRoom };
+const getRooms = () => {
+  return localStorage.getItem("roomList");
+};
+
+const clearData = () => {
+  localStorage.clear();
+};
+
+export {
+  createShortID,
+  createID,
+  createUser,
+  checkIfUserExists,
+  addRoom,
+  getRooms,
+  clearData
+};

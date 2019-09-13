@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import Slider from "@material-ui/core/Slider";
 import Fade from "@material-ui/core/Fade";
@@ -12,7 +12,8 @@ import "./RoomCreationForm.scss";
 import {
   checkIfUserExists,
   createUser,
-  addRoom
+  addRoom,
+  createID
 } from "../../../utilities/LocalStorage";
 
 // material ui styles
@@ -106,18 +107,21 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   };
 
   // handles cuisine click
-  const handleCuisineClick = (el, index) => {
-    setUpdate(update + 1);
-    cuisineStates[index]
-      ? (cuisineStates[index] = false)
-      : (cuisineStates[index] = el);
-  };
+  const handleCuisineClick = useCallback(
+    (el, index) => {
+      setUpdate(update + 1);
+      cuisineStates[index]
+        ? (cuisineStates[index] = false)
+        : (cuisineStates[index] = el);
+    },
+    [cuisineStates, update]
+  );
 
   // update the button style when clicked
   useEffect(() => {
     if (topCuisines) {
       let res = [];
-      topCuisines.map((el, index) => {
+      topCuisines.forEach((el, index) => {
         res.push(
           <Button
             onClick={e => {
@@ -134,14 +138,14 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
       });
       setCuisineButtons(res);
     }
-  }, [update]);
+  }, [update, classes.button, cuisineStates, handleCuisineClick, topCuisines]);
 
   // create the initial cuisine buttons
   const createCuisineButtons = data => {
     // set the data
     setTopCuisines(data);
     let res = [];
-    data.map((el, index) => {
+    data.forEach((el, index) => {
       res.push(
         <Button
           onClick={e => {
@@ -203,39 +207,36 @@ const RoomCreationForm = ({ changeTitleCallback, changeSubtitleCallback }) => {
   // handles create button
   const handleCreate = async () => {
     let userID = checkIfUserExists();
-    if (userID) {
-      // if user exists
-    } else {
-      // otherwise
-      userID = createUser(); // create user
-    }
-    console.log(userID);
-
     const roomID = addRoom();
+    const inviteID = createID();
+    if (!userID) {
+      userID = createUser(); // create user if they don't exist
+    }
 
     // format the payload
     const payload = {
       roomID: roomID,
       creatorID: userID,
+      inviteID: inviteID,
       users: [
         {
           id: userID,
+          nickName: nickname,
           lat: latLng.lat,
           lng: latLng.lng,
           locationDescription: locationDescription,
           radius: radius,
           cuisines: cuisineStates
-      },
+        }
       ]
-      }
+    };
 
     // send the payload to the server
     const createRoomAPIURL = `http://localhost:8001/create-room`;
-    let res = await axios.post(createRoomAPIURL, payload);
-    let data = res.data;
+    await axios.post(createRoomAPIURL, payload);
 
     // redirect to the new room !!!
-    window.location.href=`/room/${roomID}`;
+    window.location.href = `/room/${roomID}`;
   };
 
   // handles nickname state on input change
