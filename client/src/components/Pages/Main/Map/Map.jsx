@@ -4,13 +4,22 @@ import {
   GoogleMap,
   Marker,
   withScriptjs,
-  Circle
+  Circle,
+  InfoWindow
 } from "react-google-maps";
 import axios from "axios";
 import { Context } from "../../../../Context";
-import { CircularProgress, Box, Fade, useTheme } from "@material-ui/core";
+import {
+  CircularProgress,
+  Box,
+  Fade,
+  useTheme,
+  Typography,
+  Chip
+} from "@material-ui/core";
+import Rating from "@material-ui/lab/Rating";
 
-const MapWrapper = () => {
+const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
   const [restaurants, setRestaurants] = useState();
   const [fetching, setFetching] = useState(true);
   const [latLng, setLatLng] = useState();
@@ -57,6 +66,8 @@ const MapWrapper = () => {
         latLng={latLng}
         restaurants={restaurants}
         radius={radius}
+        selectedLocation={selectedLocation}
+        setSelectedLocation={setSelectedLocation}
         googleMapURL
       />
     </Fade>
@@ -80,45 +91,92 @@ const MapWrapper = () => {
 };
 
 const Map = withScriptjs(
-  withGoogleMap(({ latLng, restaurants, radius }) => {
-    let firstLatLng = { lat: restaurants[0].lat, lng: restaurants[0].lng };
-    const theme = useTheme();
-    const circleOptions = {
-      fillColor: theme.palette.primary.main,
-      fillOpacity: 0.1,
-      strokeColour: theme.palette.primary.main,
-      strokeWeight: 0.5,
-      strokeOpacity: 0.5,
-      clickable: false
-    };
+  withGoogleMap(
+    ({
+      latLng,
+      restaurants,
+      radius,
+      setSelectedLocation,
+      selectedLocation
+    }) => {
+      let firstLatLng = { lat: restaurants[0].lat, lng: restaurants[0].lng };
+      const theme = useTheme();
+      const circleOptions = {
+        fillColor: theme.palette.primary.main,
+        fillOpacity: 0.1,
+        strokeColour: theme.palette.primary.main,
+        strokeWeight: 0.5,
+        strokeOpacity: 0.8,
+        clickable: false
+      };
 
-    let markers = restaurants.map(el => (
-      <Marker
-        key={el.id}
-        position={{ lat: parseFloat(el.lat), lng: parseFloat(el.lng) }}
-      />
-    ));
+      let markers = restaurants.map(el => {
+        const handleMarkerClick = e => {
+          console.log(el);
+          setSelectedLocation(el.id);
+        };
 
-    return (
-      <GoogleMap
-        defaultZoom={17}
-        defaultCenter={{
-          lat: parseFloat(firstLatLng.lat),
-          lng: parseFloat(firstLatLng.lng)
-        }}
-      >
-        <Circle
-          options={circleOptions}
+        return (
+          <Marker
+            clickable
+            onClick={handleMarkerClick}
+            key={el.id}
+            position={{ lat: parseFloat(el.lat), lng: parseFloat(el.lng) }}
+          >
+            {selectedLocation === el.id && (
+              <InfoWindow>
+                <div style={{ margin: "auto", textAlign: "center" }}>
+                  <Typography
+                    variant="h6"
+                    style={{ color: theme.palette.primary.main }}
+                  >
+                    {el.name}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    style={{ color: theme.palette.text.secondary }}
+                  >
+                    {el.establishment[0]}
+                  </Typography>
+
+                  <Box>
+                    {el.cuisines.map(cuisine => (
+                      <Chip
+                        label={cuisine}
+                        color="primary"
+                        style={{ margin: theme.spacing(1) }}
+                      />
+                    ))}
+                  </Box>
+                  <Rating value={el.rating} precision={0.5} readOnly />
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        );
+      });
+
+      return (
+        <GoogleMap
+          defaultZoom={17}
           defaultCenter={{
-            lat: parseFloat(latLng.lat),
-            lng: parseFloat(latLng.lng)
+            lat: parseFloat(firstLatLng.lat),
+            lng: parseFloat(firstLatLng.lng)
           }}
-          radius={radius}
-        />
-        {markers}
-      </GoogleMap>
-    );
-  })
+        >
+          <Circle
+            options={circleOptions}
+            defaultCenter={{
+              lat: parseFloat(latLng.lat),
+              lng: parseFloat(latLng.lng)
+            }}
+            radius={radius}
+          />
+          {markers}
+        </GoogleMap>
+      );
+    }
+  )
 );
 
 export default MapWrapper;

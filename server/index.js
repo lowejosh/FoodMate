@@ -101,6 +101,8 @@ server.get("/restaurants/:roomID", (req, res) => {
             lat: el.location.latitude,
             lng: el.location.longitude,
             address: el.location.address,
+            rating: el.user_rating.aggregate_rating,
+            ratingCount: el.user_rating.votes,
             url: el.url
           });
         });

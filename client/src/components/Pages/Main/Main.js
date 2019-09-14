@@ -31,6 +31,7 @@ const Main = () => {
   const [verified, setVerified] = useState(false);
   const { roomID, setRoomID } = useContext(Context);
   const [inviteLink, setInviteLink] = useState();
+  const [selectedLocation, setSelectedLocation] = useState();
 
   // redirect
   if (!roomID) {
@@ -167,7 +168,10 @@ const Main = () => {
                 {/* Chart */}
                 <Grid item xs={12} md={8} lg={8}>
                   <Paper className={fixedHeightPaperNoPadding}>
-                    <MapWrapper />
+                    <MapWrapper
+                      selectedLocation={selectedLocation}
+                      setSelectedLocation={setSelectedLocation}
+                    />
                   </Paper>
                 </Grid>
                 {/* Recent Deposits */}
