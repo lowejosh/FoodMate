@@ -20,7 +20,6 @@ import { Box, Fade, Modal, Link, Button } from "@material-ui/core";
 import Sidebar from "./Sidebar/Sidebar";
 import { Context } from "../../../Context";
 import Backdrop from "@material-ui/core/Backdrop";
-import Map from "./Map/Map";
 import MapWrapper from "./Map/Map";
 import SelectedLocationInfo from "./SelectedLocationInfo/SelectedLocationInfo";
 import Preferences from "./Preferences";

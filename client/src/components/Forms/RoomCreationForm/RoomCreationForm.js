@@ -97,7 +97,7 @@ const RoomCreationForm = ({
   });
   const [topCuisines, setTopCuisines] = useState();
   const [update, setUpdate] = useState(0);
-  const { roomID, setRoomID } = useContext(Context);
+  const { setRoomID } = useContext(Context);
 
   // handles closing the geosuggest dropdown
   function handleClose() {

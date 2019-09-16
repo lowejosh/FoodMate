@@ -14,8 +14,7 @@ import {
   Box,
   Fade,
   useTheme,
-  Typography,
-  Chip
+  Typography
 } from "@material-ui/core";
 
 const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
