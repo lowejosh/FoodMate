@@ -96,7 +96,11 @@ const Main = () => {
     if (data.verified === false) {
       setVerified({ verified: false, message: data.message });
     } else {
-      setInviteLink(`http://localhost:3000/invite/${data.inviteID}/${roomID}`);
+      let baseURL = window.location.href.substr(
+        0,
+        window.location.href.length - 5
+      );
+      setInviteLink(`${baseURL}/invite/${data.inviteID}/${roomID}`);
       setRoomName(data.roomName);
       setVerified({ verified: true });
     }
