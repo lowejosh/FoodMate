@@ -22,6 +22,9 @@ import { Context } from "../../../Context";
 import Backdrop from "@material-ui/core/Backdrop";
 import Map from "./Map/Map";
 import MapWrapper from "./Map/Map";
+import SelectedLocationInfo from "./SelectedLocationInfo/SelectedLocationInfo";
+import Preferences from "./Preferences";
+import SuggestedLocations from "./SuggestedLocations/SuggestedLocations";
 
 const Main = () => {
   const classes = useStyles();
@@ -32,6 +35,7 @@ const Main = () => {
   const { roomID, setRoomID } = useContext(Context);
   const [inviteLink, setInviteLink] = useState();
   const [selectedLocation, setSelectedLocation] = useState();
+  const [roomName, setRoomName] = useState();
 
   // redirect
   if (!roomID) {
@@ -82,7 +86,6 @@ const Main = () => {
   );
 
   const verifyRoom = useCallback(async () => {
-    // const roomID = props.match.params.roomID;
     const userID = checkIfUserExists();
     const verifyRoomAPIURL = `http://localhost:8001/verify-room/${roomID}/${userID}`;
     let res = await axios.get(verifyRoomAPIURL);
@@ -90,7 +93,8 @@ const Main = () => {
     if (data.verified === false) {
       setVerified({ verified: false, message: data.message });
     } else {
-      setInviteLink(`http://localhost:3000/invite/${data.inviteID}`);
+      setInviteLink(`http://localhost:3000/invite/${data.inviteID}/${roomID}`);
+      setRoomName(data.roomName);
       setVerified({ verified: true });
     }
     setVerifying(false);
@@ -123,15 +127,23 @@ const Main = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
+          <Fade
             className={classes.title}
+            timeout={500}
+            in={typeof roomName !== "undefined"}
+            mountOnEnter
+            unmountOnExit
           >
-            FoodMate - {roomID}
-          </Typography>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              className={classes.title}
+            >
+              FoodMate - {roomName}
+            </Typography>
+          </Fade>
           {verified.verified ? (
             <IconButton onClick={handleInviteOpen} color="inherit">
               <PersonAddIcon />
@@ -177,19 +189,26 @@ const Main = () => {
                 {/* Recent Deposits */}
                 <Grid item xs={12} md={4} lg={4}>
                   <Paper className={fixedHeightPaper}>
-                    Selected Location Info
+                    <SelectedLocationInfo
+                      selectedLocation={selectedLocation}
+                      setSelectedLocation={setSelectedLocation}
+                    />
                   </Paper>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <Paper className={fixedHeightPaper}>
-                    Suggested Locations
+                    Recommended Locations
+                  </Paper>
+                </Grid> */}
+                <Grid item xs={12} md={6}>
+                  <Paper className={fixedHeightPaper}>
+                    <SuggestedLocations />
                   </Paper>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                  <Paper className={fixedHeightPaper}>Chat</Paper>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <Paper className={fixedHeightPaper}>Preferences</Paper>
+                <Grid item xs={12} md={6}>
+                  <Paper className={fixedHeightPaper}>
+                    <Preferences roomID={roomID} />
+                  </Paper>
                 </Grid>
               </Grid>
             ) : (

@@ -17,7 +17,6 @@ import {
   Typography,
   Chip
 } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
 
 const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
   const [restaurants, setRestaurants] = useState();
@@ -36,7 +35,7 @@ const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
       // error stuff
       setFetching(false);
     } else {
-      console.log(data);
+      setSelectedLocation(data.payload[0]);
       setLatLng({ lat: data.lat, lng: data.lng });
       setRadius(data.radius);
       setRestaurants(data.payload);
@@ -46,6 +45,7 @@ const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
 
   useEffect(() => {
     if (fetching) {
+      setSelectedLocation(false);
       fetchRestaurants();
     }
   }, [roomID]);
@@ -60,7 +60,16 @@ const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
     >
       <Map
         googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
-        loadingElement={<div style={{ height: `100%` }}></div>}
+        loadingElement={
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <CircularProgress />
+          </Box>
+        }
         containerElement={<div style={{ height: `100%` }} />}
         mapElement={<div style={{ height: `100%` }} />}
         latLng={latLng}
@@ -68,7 +77,7 @@ const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
         radius={radius}
         selectedLocation={selectedLocation}
         setSelectedLocation={setSelectedLocation}
-        googleMapURL
+        googleMapURL={"true"}
       />
     </Fade>
   ) : (
@@ -111,9 +120,8 @@ const Map = withScriptjs(
       };
 
       let markers = restaurants.map(el => {
-        const handleMarkerClick = e => {
-          console.log(el);
-          setSelectedLocation(el.id);
+        const handleMarkerClick = () => {
+          setSelectedLocation(el);
         };
 
         return (
@@ -123,7 +131,7 @@ const Map = withScriptjs(
             key={el.id}
             position={{ lat: parseFloat(el.lat), lng: parseFloat(el.lng) }}
           >
-            {selectedLocation === el.id && (
+            {selectedLocation.id === el.id && (
               <InfoWindow>
                 <div style={{ margin: "auto", textAlign: "center" }}>
                   <Typography
@@ -138,17 +146,6 @@ const Map = withScriptjs(
                   >
                     {el.establishment[0]}
                   </Typography>
-
-                  <Box>
-                    {el.cuisines.map(cuisine => (
-                      <Chip
-                        label={cuisine}
-                        color="primary"
-                        style={{ margin: theme.spacing(1) }}
-                      />
-                    ))}
-                  </Box>
-                  <Rating value={el.rating} precision={0.5} readOnly />
                 </div>
               </InfoWindow>
             )}

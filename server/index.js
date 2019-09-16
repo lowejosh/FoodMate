@@ -82,7 +82,7 @@ server.get("/restaurants/:roomID", (req, res) => {
   let lng;
 
   const fetchRestaurants = async (lat, lng, radius) => {
-    // does 2 calls becomes zomato limits to 20 results -- need 40
+    // does 2 calls because zomato limits to 20 results -- need 40
     const config = { headers: { "user-key": process.env.ZOMATO_API_KEY } };
     const URL = `https://developers.zomato.com/api/v2.1/search?lat=${lat}&lon=${lng}&start=0&count=20&radius=${radius}&sort=real_distance`;
     const URL2 = `https://developers.zomato.com/api/v2.1/search?lat=${lat}&lon=${lng}&start=20&count=20&radius=${radius}$sort=real_distance`;
@@ -127,6 +127,26 @@ server.get("/restaurants/:roomID", (req, res) => {
     });
 });
 
+server.get("/invite-id/:inviteID", (req, res) => {
+  const inviteID = req.params.inviteID;
+  firebase
+    .database()
+    .ref("rooms/")
+    .once("value")
+    .then(function(snapshot) {
+      let failed = true;
+      snapshot.val().forEach(child => {
+        if (inviteID === child.inviteID) {
+          failed = false;
+          res.send(child.key);
+        }
+      });
+      if (failed) {
+        res.send(null);
+      }
+    });
+});
+
 // server.get("/load-room/:roomID", (req, res) => {
 //   const roomID = req.params.roomID;
 //   firebase
@@ -165,7 +185,11 @@ server.get("/verify-room/:roomID/:userID", (req, res) => {
 
       // response
       if (verified) {
-        res.json({ verified: true, inviteID: data.inviteID });
+        res.json({
+          verified: true,
+          inviteID: data.inviteID,
+          roomName: data.roomName
+        });
       } else {
         res.json({
           verified: false,
@@ -186,6 +210,30 @@ server.get("/list-data/:userID", (req, res) => {
       let data = snapshot.val();
       if (data) {
         res.json(data.rooms);
+      } else {
+        res.json(null);
+      }
+    });
+});
+
+// returns the room list for a given user
+server.get("/room-cuisines/:roomID", (req, res) => {
+  const roomID = req.params.roomID;
+  firebase
+    .database()
+    .ref(`rooms/${roomID}/users`)
+    .once("value")
+    .then(function(snapshot) {
+      let data = snapshot.val();
+      if (data) {
+        let cuisineArray = [];
+        Object.keys(data).forEach(user => {
+          cuisineArray.push({
+            user: data[user].nickName,
+            cuisine: data[user].cuisines
+          });
+        });
+        res.json(cuisineArray);
       } else {
         res.json(null);
       }
@@ -264,4 +312,22 @@ server.post("/join-room", (req, res) => {
         res.json({ roomID: roomID });
       }
     });
+});
+
+// suggests a location
+server.post("/suggest-location", (req, res) => {
+  let data = req.body;
+
+  let payload = {
+    name: data.name,
+    cuisines: data.cuisines,
+    establishment: data.establishment
+  };
+
+  // set suggested location data
+  firebase
+    .database()
+    .ref(`rooms/${data.roomID}/suggestedLocations/${data.id}`)
+    .set(payload);
+  res.json({ message: "Added location" });
 });

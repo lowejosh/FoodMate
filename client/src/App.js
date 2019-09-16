@@ -71,9 +71,13 @@ const App = () => {
     const [initialSubtitle, setInitialSubTitle] = useState("");
     const [latLng, setLatLng] = useState("");
     const { roomID } = useContext(Context);
+    let roomIDBuffer = roomID;
+    if (!roomID) {
+      roomIDBuffer = props.match.params.roomID;
+    }
 
     const fetchTitleData = async () => {
-      const APIURL = `http://localhost:8001/location-name/${roomID}/`;
+      const APIURL = `http://localhost:8001/location-name/${roomIDBuffer}/`;
       let res = await axios.get(APIURL);
       let data = res.data;
       if (data.message) {
@@ -117,7 +121,11 @@ const App = () => {
           <Route path="/home" component={Main} />
           <Route exact path="/welcome" component={FirstRoomComponent} />
           <Route exact path="/create" component={CreateRoomComponent} />
-          <Route exact path="/invite/:inviteID" component={JoinRoomComponent} />
+          <Route
+            exact
+            path="/invite/:inviteID/:roomID"
+            component={JoinRoomComponent}
+          />
         </Router>
       </ContextProvider>
     </ThemeProvider>
