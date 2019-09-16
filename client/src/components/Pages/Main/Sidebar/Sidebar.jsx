@@ -6,7 +6,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ChatIcon from "@material-ui/icons/Chat";
 import AddIcon from "@material-ui/icons/Add";
 import axios from "axios";
-import { checkIfUserExists } from "../../../../utilities/LocalStorage";
+import {
+  checkIfUserExists,
+  setRedirectRoom
+} from "../../../../utilities/LocalStorage";
 import useStyles from "../useStyles";
 import { Context } from "../../../../Context";
 
@@ -33,6 +36,7 @@ const Sidebar = () => {
               key={room}
               onClick={() => {
                 setRoomID(room);
+                setRedirectRoom(room);
               }}
               selected={isSelected}
               button

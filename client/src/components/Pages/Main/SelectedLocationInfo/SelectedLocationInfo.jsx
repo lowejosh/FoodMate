@@ -13,7 +13,11 @@ import Rating from "@material-ui/lab/Rating";
 import { Context } from "../../../../Context";
 import Axios from "axios";
 
-const SelectedLocationInfo = ({ setSelectedLocation, selectedLocation }) => {
+const SelectedLocationInfo = ({
+  setSelectedLocation,
+  selectedLocation,
+  setFetchingSuggestedLocations
+}) => {
   const [update, setUpdate] = useState(true);
   const { roomID } = useContext(Context);
 
@@ -36,17 +40,21 @@ const SelectedLocationInfo = ({ setSelectedLocation, selectedLocation }) => {
     // send the payload to the server
     const APIURL = "http://localhost:8001/suggest-location";
     let res = await Axios.post(APIURL, payload);
-    console.log(res.data.message);
   };
 
   const handleSuggest = () => {
     sendPayload();
+    setFetchingSuggestedLocations(true);
   };
 
   const theme = useTheme();
   return selectedLocation && update ? (
     <Fade in={update} timeout={500} mountOnEnter unmountOnExit>
-      <div style={{ margin: "auto", textAlign: "center" }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        style={{ padding: theme.spacing(1.5) }}
+      >
         <Typography variant="h6" style={{ color: theme.palette.primary.main }}>
           {selectedLocation.name}
         </Typography>
@@ -64,20 +72,18 @@ const SelectedLocationInfo = ({ setSelectedLocation, selectedLocation }) => {
               key={cuisine}
               label={cuisine}
               color="primary"
-              style={{ margin: theme.spacing(1) }}
+              style={{
+                marginRight: theme.spacing(1),
+                marginTop: theme.spacing(1),
+                marginBottom: theme.spacing(1)
+              }}
             />
           ))}
           <Typography
             variant="subtitle1"
             style={{ color: theme.palette.text.secondary }}
           >
-            <Box
-              style={{
-                margin: theme.spacing(1)
-              }}
-            >
-              {selectedLocation.address}
-            </Box>
+            <Box>{selectedLocation.address}</Box>
           </Typography>
         </Box>
         {selectedLocation.rating ? (
@@ -122,7 +128,7 @@ const SelectedLocationInfo = ({ setSelectedLocation, selectedLocation }) => {
         >
           Suggest
         </Button>
-      </div>
+      </Box>
     </Fade>
   ) : (
     <Box

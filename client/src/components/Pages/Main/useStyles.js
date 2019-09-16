@@ -79,6 +79,9 @@ const useStyles = makeStyles(theme => ({
   fixedHeight: {
     height: 400
   },
+  fixedHeightBigger: {
+    height: 450
+  },
   sidebarList: {
     padding: 0
   },

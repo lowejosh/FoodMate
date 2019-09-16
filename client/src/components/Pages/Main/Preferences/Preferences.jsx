@@ -35,18 +35,21 @@ const Preferences = ({ roomID }) => {
 
   return !fetching && cuisineData ? (
     <Fade in={!fetching} timeout={500} mountOnEnter unmountOnExit>
-      <Box display="flex" alignItems="center" flexDirection="column">
-        <br />
-        <Typography align="center" variant="h6" color="primary">
+      <Box
+        style={{ padding: theme.spacing(1.5) }}
+        display="flex"
+        flexDirection="column"
+      >
+        <Typography variant="h5" color="primary">
           Preferences
         </Typography>
         <br />
         {cuisineData.map((user, index) => (
           <Box key={index}>
-            <Typography align="center" color="primary" variant="subtitle1">
-              <i>{user.user}</i>
+            <Typography variant="h6" color="primary">
+              {user.user}
             </Typography>
-            <Box display="flex" justifyContent="center" flexDirection="row">
+            <Box display="flex" flexDirection="row">
               {user.cuisine.map(cuisine => (
                 <>
                   {cuisine && (
@@ -54,13 +57,23 @@ const Preferences = ({ roomID }) => {
                       key={cuisine}
                       label={cuisine}
                       color="primary"
-                      style={{ margin: theme.spacing(1) }}
+                      style={{
+                        marginRight: theme.spacing(1),
+                        marginTop: theme.spacing(1),
+                        marginBottom: theme.spacing(1)
+                      }}
                     />
                   )}
                 </>
               ))}
             </Box>
-            <br />
+            {index !== cuisineData.length - 1 && (
+              <hr
+                style={{
+                  marginBottom: theme.spacing(1)
+                }}
+              ></hr>
+            )}
           </Box>
         ))}
       </Box>

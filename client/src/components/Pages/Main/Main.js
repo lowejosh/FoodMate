@@ -36,6 +36,9 @@ const Main = () => {
   const [inviteLink, setInviteLink] = useState();
   const [selectedLocation, setSelectedLocation] = useState();
   const [roomName, setRoomName] = useState();
+  const [fetchingSuggestedLocations, setFetchingSuggestedLocations] = useState(
+    true
+  );
 
   // redirect
   if (!roomID) {
@@ -79,6 +82,7 @@ const Main = () => {
   }, [roomID]);
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const fixedHeightPaperBigger = clsx(classes.paper, classes.fixedHeightBigger);
   const fixedHeightPaperNoPadding = clsx(
     classes.paper,
     classes.fixedHeight,
@@ -192,6 +196,9 @@ const Main = () => {
                     <SelectedLocationInfo
                       selectedLocation={selectedLocation}
                       setSelectedLocation={setSelectedLocation}
+                      setFetchingSuggestedLocations={
+                        setFetchingSuggestedLocations
+                      }
                     />
                   </Paper>
                 </Grid>
@@ -201,12 +208,17 @@ const Main = () => {
                   </Paper>
                 </Grid> */}
                 <Grid item xs={12} md={6}>
-                  <Paper className={fixedHeightPaper}>
-                    <SuggestedLocations />
+                  <Paper className={fixedHeightPaperBigger}>
+                    <SuggestedLocations
+                      fetchingSuggestedLocations={fetchingSuggestedLocations}
+                      setFetchingSuggestedLocations={
+                        setFetchingSuggestedLocations
+                      }
+                    />
                   </Paper>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Paper className={fixedHeightPaper}>
+                  <Paper className={fixedHeightPaperBigger}>
                     <Preferences roomID={roomID} />
                   </Paper>
                 </Grid>

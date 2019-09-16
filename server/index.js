@@ -331,3 +331,19 @@ server.post("/suggest-location", (req, res) => {
     .set(payload);
   res.json({ message: "Added location" });
 });
+
+// get suggested locations
+server.get("/get-suggested-locations/:roomID", (req, res) => {
+  const roomID = req.params.roomID;
+  firebase
+    .database()
+    .ref(`rooms/${roomID}/suggestedLocations`)
+    .once("value")
+    .then(function(snapshot) {
+      if (snapshot) {
+        res.json(snapshot.val());
+      } else {
+        res.send(null);
+      }
+    });
+});

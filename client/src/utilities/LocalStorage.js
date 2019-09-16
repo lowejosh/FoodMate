@@ -55,7 +55,12 @@ const getRedirectRoom = () => {
   return localStorage.getItem("redirectRoom");
 };
 
+const setRedirectRoom = roomID => {
+  localStorage.setItem("redirectRoom", roomID);
+};
+
 export {
+  setRedirectRoom,
   createShortID,
   createID,
   createUser,
