@@ -129,11 +129,8 @@ const RoomCreationForm = ({
 
   // initial check for given lat & lng for join type
   useEffect(() => {
-    console.log(givenLatLng);
-    console.log(type);
     if (type === "join") {
       if (givenLatLng) {
-        console.log("reached");
         setLatLng(givenLatLng);
       }
     }
