@@ -8,7 +8,7 @@ import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 import GeoSuggest from "react-geosuggest";
 import axios from "axios";
-import "./RoomCreationForm.scss";
+import "./RoomCreationForm.css";
 import {
   checkIfUserExists,
   createUser,

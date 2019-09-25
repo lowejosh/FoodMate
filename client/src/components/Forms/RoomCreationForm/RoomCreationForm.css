@@ -1,19 +1,40 @@
-.geosuggest__input {
-  /* display: none; */
+.geosuggest__input, .input {
+  padding: 0.875rem;
+  width: 100%;
+  font-size: 16px;
 }
 
-.geosuggest__item--active {
-  background: #267dc0;
+.geosuggest__item--active, .geosuggest__item:hover {
+  background: #871812;
   color: #fff;
+  transition: 0.1s;
+}
+
+.geosuggest__item:hover {
+  cursor: pointer;
 }
 
 .geosuggest__item {
   padding: 0.4rem;
-  font-size: 16px;
+}
+
+.geosuggest__suggests--hidden {
+  height: 0;
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  border-width: 0;
 }
 
 .geosuggest__suggests {
   list-style-type: none;
   padding-left: 0;
   background-color: #ededed;
+  border: solid 1px #d3d3d3;
+  margin: 0;
+}
+
+.fixed-width {
+  width: 100%;
+
 }

@@ -1,13 +1,15 @@
-FROM node:8.7.0-alpine
+FROM node:lts-slim
 
-RUN mkdir -p /srv/app/foodmate-client
-WORKDIR /srv/app/foodmate-client
+RUN mkdir -p /usr/src/app/client
 
-COPY package.json /srv/app/foodmate-client
-COPY package-lock.json /srv/app/foodmate-client
+WORKDIR /usr/src/app/client
 
-RUN npm install
+EXPOSE 3000
 
-COPY . /srv/app/foodmate-client
+COPY package.json /usr/src/app/client
+COPY package-lock.json /usr/src/app/client
 
-CMD [ "npm", "start "]
+RUN npm install --silent
+RUN npm install react-scripts@3.0.1 -g --silent
+
+CMD ["npm", "start"]

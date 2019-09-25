@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import EnterRoom from "./components/Pages/EnterRoom";
 import Main from "./components/Pages/Main";
 import axios from "axios";
-import "./App.scss";
+import "./App.css";
 import {
   checkIfUserExists,
   getRooms,

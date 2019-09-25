@@ -1,13 +1,14 @@
-FROM node:8.7.0-alpine
+FROM node:lts-slim
 
-RUN mkdir -p /srv/app/foodmate-server
-WORKDIR /srv/app/foodmate-server
+RUN mkdir -p /usr/src/app/server
 
-COPY package.json /srv/app/foodmate-server
-COPY package-lock.json /srv/app/foodmate-server
+WORKDIR /usr/src/app/server
+
+EXPOSE 8001
+
+COPY package.json /usr/src/app/server
+COPY package-lock.json /usr/src/app/server
 
 RUN npm install
 
-COPY . /srv/app/foodmate-server
-
-CMD [ "node", "index.js"]
+CMD [ "npm", "run", "dev" ]

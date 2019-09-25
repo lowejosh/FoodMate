@@ -1,35 +1,22 @@
-version: '3'
-
+version: "3"
 services:
-
-    # server container
-    server:
-        build: ./server
-        expose:
-            - ${APP_SERVER_PORT}
-        environment:
-            API_HOST: ${API_HOST}
-            APP_SERVER_PORT: ${APP_SERVER_PORT}
-        ports:
-            - ${APP_SERVER_PORT}:${APP_SERVER_PORT}
-        volumes:
-            - ./server:/srv/app/foodmate-server/src
-        command: node index.js
-        image: n9745734/foodmate_server
-        #
-    # client container
-    client:
-        build: ./client
-        environment:
-            - REACT_APP_PORT=${REACT_APP_PORT}
-        expose:
-            - ${REACT_APP_PORT}
-        ports:
-            - ${REACT_APP_PORT}:${REACT_APP_PORT}
-        volumes:
-            - ./client/src:/srv/app/foodmate-client/src
-            - ./client/public:/srv/app/foodmate-client/public
-        links:
-            - server
-        command: npm run start
+    frontend:
+        container_name: foodmate_client
+        build:
+            context: ./client
+            dockerfile: Dockerfile
         image: n9745734/foodmate_client
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./client:/usr/src/app/client
+    backend:
+        container_name: foodmate_server
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        image: n9745734/foodmate_server
+        ports:
+            - "8001:8001"
+        volumes:
+            - ./server:/usr/src/app/server
