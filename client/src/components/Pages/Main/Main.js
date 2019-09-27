@@ -90,7 +90,7 @@ const Main = () => {
 
   const verifyRoom = useCallback(async () => {
     const userID = checkIfUserExists();
-    const verifyRoomAPIURL = `http://localhost:8001/verify-room/${roomID}/${userID}`;
+    const verifyRoomAPIURL = `http://54.174.106.98:8001/verify-room/${roomID}/${userID}`;
     let res = await axios.get(verifyRoomAPIURL);
     let data = res.data;
     if (data.verified === false) {

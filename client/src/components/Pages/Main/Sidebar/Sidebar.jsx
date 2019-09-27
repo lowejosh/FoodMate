@@ -73,7 +73,7 @@ const Sidebar = () => {
 
   const fetchListData = useCallback(async () => {
     const userID = checkIfUserExists();
-    const getListDataAPIURL = `http://localhost:8001/list-data/${userID}`;
+    const getListDataAPIURL = `http://54.174.106.98:8001/list-data/${userID}`;
     let res = await axios.get(getListDataAPIURL);
     let data = res.data;
     setListItems(createListItems(data));

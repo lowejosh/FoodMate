@@ -15,7 +15,7 @@ const Preferences = ({ roomID }) => {
   const theme = useTheme();
 
   const fetchCuisineList = async () => {
-    const cuisineListAPIURL = `http://localhost:8001/room-cuisines/${roomID}`;
+    const cuisineListAPIURL = `http://54.174.106.98:8001/room-cuisines/${roomID}`;
     let res = await axios.get(cuisineListAPIURL);
     let data = res.data;
     if (data) {

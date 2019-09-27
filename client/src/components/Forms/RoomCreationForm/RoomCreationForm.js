@@ -185,7 +185,7 @@ const RoomCreationForm = ({
 
   // fetch the cuisine info for given lat/lng
   const fetchCuisineInfo = async latLng => {
-    const cuisineAPIURL = `http://localhost:8001/top-cuisines/${latLng.lat}/${latLng.lng}`;
+    const cuisineAPIURL = `http://54.174.106.98:8001/top-cuisines/${latLng.lat}/${latLng.lng}`;
     let res = await axios.get(cuisineAPIURL);
     let data = res.data;
     // if theres no cuisines
@@ -268,8 +268,8 @@ const RoomCreationForm = ({
     // send the payload to the server
     const APIURL =
       type === "create"
-        ? "http://localhost:8001/create-room"
-        : "http://localhost:8001/join-room";
+        ? "http://54.174.106.98:8001/create-room"
+        : "http://54.174.106.98:8001/join-room";
     let res = await axios.post(APIURL, payload);
 
     // redirect to the new room !!!

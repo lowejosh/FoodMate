@@ -20,7 +20,7 @@ const SuggestedLocations = ({
   const theme = useTheme();
 
   const fetchSuggestedLocations = async () => {
-    const APIURL = `http://localhost:8001/get-suggested-locations/${roomID}`;
+    const APIURL = `http://54.174.106.98:8001/get-suggested-locations/${roomID}`;
     let res = await Axios.get(APIURL);
     let data = res.data;
     setSuggestedLocations(data);

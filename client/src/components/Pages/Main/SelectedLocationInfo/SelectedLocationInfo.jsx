@@ -38,7 +38,7 @@ const SelectedLocationInfo = ({
     };
 
     // send the payload to the server
-    const APIURL = "http://localhost:8001/suggest-location";
+    const APIURL = "http://54.174.106.98:8001/suggest-location";
     let res = await Axios.post(APIURL, payload);
   };
 

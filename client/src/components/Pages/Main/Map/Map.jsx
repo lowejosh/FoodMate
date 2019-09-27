@@ -25,7 +25,7 @@ const MapWrapper = ({ setSelectedLocation, selectedLocation }) => {
   const { roomID } = useContext(Context);
 
   const fetchRestaurants = async () => {
-    const APIURL = `http://localhost:8001/restaurants/${roomID}`;
+    const APIURL = `http://54.174.106.98:8001/restaurants/${roomID}`;
     let res = await axios.get(APIURL);
     let data = res.data;
     // if theres no restaurants

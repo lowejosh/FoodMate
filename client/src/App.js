@@ -77,7 +77,7 @@ const App = () => {
     }
 
     const fetchTitleData = async () => {
-      const APIURL = `http://localhost:8001/location-name/${roomIDBuffer}/`;
+      const APIURL = `http://54.174.106.98:8001/location-name/${roomIDBuffer}/`;
       let res = await axios.get(APIURL);
       let data = res.data;
       if (data.message) {
